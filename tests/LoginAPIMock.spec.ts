@@ -1,7 +1,7 @@
 import {test, expect} from '@playwright/test';
 import {LoginPage} from '../Pages/LoginPage';
 
-test('Login - Continue real api request @apis', async ({page}) => {
+test('Login - Continue real api request @apis @continue', async ({page}) => {
 
     await page.route('**/users/login', async (route) => {
         const postData = route.request().postDataJSON();
@@ -14,7 +14,7 @@ test('Login - Continue real api request @apis', async ({page}) => {
     await loginPageObj.loginToApp(process.env.USER_NAME2!, process.env.PASSWORD2!);
 });
 
-test('Login - Modifying real api request to deliberately fail login and assertion check @apis', async ({page}) => {
+test('Login - Modifying real api request to deliberately fail login and assertion check @apis @continue', async ({page}) => {
 
     // Below route modifies the request whenever hit the url mention in the route method.
     await page.route('**/users/login', async (route) => {
@@ -34,7 +34,7 @@ test('Login - Modifying real api request to deliberately fail login and assertio
     expect(await loginPageObj.getErrorMessage()).toBe('Incorrect username or password');
 });
 
-test('Login - Changing response to 200 OK for incorrect login credentials @apis', async ({page}) => {
+test('Login - Changing response to 200 OK for incorrect login credentials @apis @fulfill', async ({page}) => {
 
     // Below route modifies the response whenever hit the url mention in the route method.
     await page.route('**/users/login', async (route) => {
@@ -53,7 +53,7 @@ test('Login - Changing response to 200 OK for incorrect login credentials @apis'
     expect(page).toHaveURL(/contactList/);
 });
 
-test('Login - Changing response to 401 Unauthorized for correct login credentials @apis', async ({page}) => {
+test('Login - Changing response to 401 Unauthorized for correct login credentials @apis @fulfill', async ({page}) => {
 
     // Below route modifies the response whenever hit the url mention in the route method.
     await page.route('**/users/login', async (route) => {
@@ -72,7 +72,7 @@ test('Login - Changing response to 401 Unauthorized for correct login credential
     expect(await loginPageObj.getErrorMessage()).toBe('Incorrect username or password');
 });
 
-test('Login - Aborting send request to server @apis', async ({page}) => {
+test('Login - Aborting send request to server @apis @abort', async ({page}) => {
 
     // Below route abort the request whenever hit the url mention in the route method.
     await page.route('**/users/login', async (route) => {

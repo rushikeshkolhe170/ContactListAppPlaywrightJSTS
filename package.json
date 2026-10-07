@@ -1,9 +1,17 @@
 {
-  "name": "bigbasket",
+  "name": "Contact List App",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:api": "npx playwright test --grep @apis",
+    "test:apicontinue": "npx playwright test --grep @continue",
+    "test:apifulfill": "npx playwright test --grep @fulfill",
+    "test:apiabort": "npx playwright test --grep @abort",
+    "test:report": "npx playwright show-report"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
