@@ -25,7 +25,6 @@ export class APIutils
 
     async getToken() : Promise<LoginResponse>
     {
-      //let response : LoginResponse = {} as LoginResponse;
       const loginResponse = await this.apicontext.post(process.env.LOGIN_URL!, {data : this.loginPayload});
       const loginResJson : LoginApiResponse = await loginResponse.json();
       const token : string = loginResJson.token;
