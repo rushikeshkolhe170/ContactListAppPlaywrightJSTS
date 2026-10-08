@@ -2,7 +2,7 @@ import {test, expect, request} from '@playwright/test';
 import {LoginPage} from '../Pages/LoginPage';
 
 test('Contact List App login', async ({page}) : Promise<void> => {
-  await page.goto('https://thinking-tester-contact-list.herokuapp.com/');
+  await page.goto('/');
   await expect(page).toHaveTitle(/Contact List App/);
   const loginPageObj : LoginPage = new LoginPage(page);
   await loginPageObj.loginToApp(process.env.USER_NAME1!, process.env.PASSWORD1!);
@@ -10,7 +10,7 @@ test('Contact List App login', async ({page}) : Promise<void> => {
 });
 
 test('Contact List App login api @apis', async ({browser, request}) : Promise<void> => {
-  const response : any = await request.post('/users/login', {
+  const response : any = await request.post(process.env.LOGIN_URL!, {
     data: {
       email: process.env.USER_NAME2!,
       password: process.env.PASSWORD2!,
@@ -26,7 +26,7 @@ test('Contact List App login api @apis', async ({browser, request}) : Promise<vo
     localStorage.setItem('token', token);
   }, token);
   const page : any = await context.newPage();
-  await page.goto('https://thinking-tester-contact-list.herokuapp.com/contactList', { waitUntil: 'domcontentloaded' });
+  await page.goto(process.env.CONTACT_LIST_URL!, { waitUntil: 'domcontentloaded' });
   console.log('PAGE URL:', page.url());
   await expect(page).toHaveURL(/contactList/);  
 });
