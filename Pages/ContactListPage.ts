@@ -1,6 +1,4 @@
-import {type Locator, type Page} from "@playwright/test";
-import { error } from "node:console";
-import { promises } from "node:dns";
+import {expect, type Locator, type Page} from "@playwright/test";
 
 export class ContactListPage 
 {  
@@ -20,6 +18,7 @@ export class ContactListPage
     private country : Locator;
     private submitBtn : Locator;
     private cancelBtn : Locator;
+    private errorMsg : Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -38,6 +37,7 @@ export class ContactListPage
     this.country = page.getByPlaceholder('Country');
     this.submitBtn = page.locator('#submit');
     this.cancelBtn = page.locator('#cancel');
+    this.errorMsg = page.locator('#error');
   }
 
     async getContactListDetails() 
@@ -114,6 +114,47 @@ export class ContactListPage
             {
                 throw new Error('Record does not exist in the table with ' + email + ' and ' + firstName + ' ' + lastName + ' name');
             }
+    }
+
+    async addContactFormValidations(firstName : string, lastName : string, invalidDOB : string, invalidPhone : string, invalidEmail : string)
+    {
+        await this.addNewContactBtn.click();
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Contact validation failed: firstName: Path `firstName` is required., lastName: Path `lastName` is required.')
+        await this.firstName.fill(firstName);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Contact validation failed: lastName: Path `lastName` is required.')
+        await this.firstName.clear();
+        await this.lastName.fill(lastName);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Contact validation failed: firstName: Path `firstName` is required.')
+        await this.lastName.clear();
+        await this.firstName.fill(firstName);
+        await this.lastName.fill(lastName);
+        await this.dob.fill(invalidDOB);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Contact validation failed: birthdate: Birthdate is invalid')
+        await this.dob.clear();
+        await this.phone.fill(invalidPhone);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Contact validation failed: phone: Phone number is invalid')
+        await this.phone.clear();
+        await this.email.fill(invalidEmail);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Contact validation failed: email: Email is invalid')
+        await this.email.clear();
+        await this.dob.fill(invalidDOB);
+        await this.phone.fill(invalidPhone);
+        await this.email.fill(invalidEmail);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Contact validation failed: birthdate: Birthdate is invalid, email: Email is invalid, phone: Phone number is invalid')
+        await this.cancelBtn.click();
+    }
+
+    async errorMsgCheck(text : string)
+    {
+        await this.errorMsg.waitFor({state : 'visible'});
+        await expect(this.errorMsg).toHaveText(text);
     }
 }
 

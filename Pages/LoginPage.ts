@@ -29,4 +29,4 @@ export class LoginPage
         let error = await this.errorMsg.textContent();
         return error;
     }
-}
+  }
