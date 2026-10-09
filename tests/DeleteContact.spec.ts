@@ -2,7 +2,7 @@ import { test } from "@playwright/test";
 import { APIutils } from "../Utils/APIutils";
 import { ContactListPage } from "../Pages/ContactListPage";
 
-test('Validating the Add Contact form email, dob, phone', async ({ request, context}) : Promise<void> => 
+test('Validating the Image and text', async ({ request, context}) : Promise<void> => 
     {
         const loginPayload = {
             email: process.env.USER_NAME2!,
@@ -19,5 +19,5 @@ test('Validating the Add Contact form email, dob, phone', async ({ request, cont
         const page = await context.newPage();
         await page.goto(process.env.CONTACT_LIST_URL!, { waitUntil: 'domcontentloaded' });
         const contactListPageObj : ContactListPage = new ContactListPage(page);
-        await contactListPageObj.addContactFormValidations('Rajan', 'Dere', 'invalidDOB', 'invalidPhone', 'invalidMail');
+        await contactListPageObj.deleteContact('abc', 'abc', 'abc@gmail.com');
     });
