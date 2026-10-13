@@ -10,7 +10,10 @@
     "test:apicontinue": "npx playwright test --grep @continue",
     "test:apifulfill": "npx playwright test --grep @fulfill",
     "test:apiabort": "npx playwright test --grep @abort",
-    "test:report": "npx playwright show-report"
+    "test:report": "npx playwright show-report",
+    "allure:generate": "npx allure generate allure-results --output allure-report",
+    "allure:open": "npx allure open allure-report",
+    "allure:serve": "npx allure serve allure-results"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +22,8 @@
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.6.4",
+    "allure": "^3.20.1",
+    "allure-playwright": "^3.13.0",
     "dotenv": "^18.0.6"
   }
 }
