@@ -1,6 +1,6 @@
 # Contact List App – Playwright Automation Testing
 
-An end-to-end test automation project for the Contact List application, built using **Playwright** and **TypeScript**. The project demonstrates UI automation, the **Page Object Model (POM)** design pattern, environment-based configuration, and API request interception.
+An end-to-end test automation project for the Contact List application, built using **Playwright** and **TypeScript**. The project demonstrates UI automation, the **Page Object Model (POM)** design pattern, environment-based configuration, API request interception, and **Allure reporting**.
 
 The goal is to create maintainable and reusable automated tests for validating application behavior and practicing modern software testing techniques.
 
@@ -8,7 +8,7 @@ The goal is to create maintainable and reusable automated tests for validating a
 
 This project automates testing scenarios for a Contact List web application using Playwright. It organizes page interactions and test cases into separate modules to improve code readability, reusability, and maintainability.
 
-The project also includes scripts for running selected API-related test scenarios and generating an HTML test report.
+The project also includes scripts for running selected API-related test scenarios and generating HTML test reports using Playwright and Allure.
 
 ## 🛠️ Tech Stack
 
@@ -16,7 +16,8 @@ The project also includes scripts for running selected API-related test scenario
 - **Automation Framework:** Playwright Test
 - **Design Pattern:** Page Object Model (POM)
 - **Environment Configuration:** dotenv (`.env`)
-- **Test Reporting:** Playwright HTML Reporter
+- **Test Reporting:** Allure Report 3 and Playwright HTML Reporter
+- **Allure Integration:** `allure-playwright`
 - **Package Management:** npm
 - **CI/CD:** GitHub Actions workflow configuration
 
@@ -47,7 +48,9 @@ ContactListAppPlaywrightJSTS/
 ├── .gitignore                              # Git ignore rules
 ├── package.json                            # Dependencies and npm scripts
 ├── package-lock.json                       # Locked dependency versions
-└── playwright.config.ts                    # Playwright configuration
+├── playwright.config.ts                    # Playwright configuration
+├── allure-result                           # Allure test execution results
+└── allure-report                           # Generated Allure HTML
 ```
 
 ## ⚙️ Prerequisites
@@ -74,13 +77,34 @@ git clone https://github.com/rushikeshkolhe170/ContactListAppPlaywrightJSTS.git
 cd ContactListAppPlaywrightJSTS
 ```
 
-### 3. Install Dependencies
+### 3. Install Project Dependencies
 
 ```bash
 npm install
 ```
 
-### 4. Configure Environment Variables
+### 4. Install Allure Reporting
+
+Install Allure Report 3 and its Playwright integration as development dependencies:
+
+```bash
+npm install --save-dev allure allure-playwright
+```
+
+- `allure`: Allure Report 3 command-line tool.
+- `allure-playwright`: Integrates Allure reporting with Playwright Test.
+
+### 5. Install dotenv
+
+Install `dotenv` to load environment variables from the `.env` file:
+
+```bash
+npm install dotenv
+```
+
+The `dotenv` package loads environment variables into `process.env`, allowing the tests and configuration to access application URLs and test credentials.
+
+### 6. Configure Environment Variables
 
 Create a `.env` file in the project root directory and add the following environment variables:
 
@@ -98,6 +122,8 @@ PASSWORD2=validPassword
 COOKIES_DOMAIN=thinking-tester-contact-list.herokuapp.com
 ```
 
+Replace the placeholder credentials with the appropriate test-account credentials.
+
 **Environment Variable Details**
 
 | Variable | Description |
@@ -111,13 +137,18 @@ COOKIES_DOMAIN=thinking-tester-contact-list.herokuapp.com
 | `PASSWORD2` | Password used for valid login scenarios |
 | `COOKIES_DOMAIN` | Domain used for cookie-related operations |
 
-
-### 5. Install Playwright Browser Dependencies
+### 7. Install Playwright Browser Dependencies
 
 If required, run:
 
 ```bash
 npx playwright install
+```
+
+On Linux or CI environments, you may also need:
+
+```bash
+npx playwright install --with-deps
 ```
 
 ## ▶️ Running Tests
@@ -162,15 +193,73 @@ npm run test:apiabort
 
 ## 📊 Test Reports
 
-The project uses Playwright's HTML reporter.
+This project supports two reporting options: **Allure Report 3** and the **Playwright HTML Reporter**.
 
-After a test run, open the generated report using:
+### 1. Allure Reporting
+
+Allure provides a detailed view of test execution results, including passed and failed tests and available test diagnostics.
+
+#### Generate Allure Test Results
+
+Run the tests:
+
+```bash
+npm test
+```
+
+The configured Allure reporter generates test result files in the `allure-result` directory.
+
+#### Generate the Allure HTML Report
+
+After the tests finish, run:
+
+```bash
+npm run allure:generate
+```
+
+This generates the Allure HTML report in the `allure-report` directory.
+
+#### Open the Allure Report
+
+To view the generated report, execute:
+
+```bash
+npm run allure:open
+```
+
+#### Generate and Serve the Report Directly
+
+Alternatively, run:
+
+```bash
+npm run allure:serve
+```
+
+This command generates and serves the Allure report directly from the available test results.
+
+### 2. Playwright HTML Report
+
+The project also retains Playwright's built-in HTML reporting.
+
+After a test run, execute:
 
 ```bash
 npm run test:report
 ```
 
-The report helps you review test outcomes, failures, and debugging details. Screenshots and traces are configured in Playwright for additional failure investigation.
+This opens the Playwright HTML report separately from the Allure report.
+
+### Reporting Commands Summary
+
+| Command | Purpose |
+|---|---|
+| `npm test` | Execute tests and generate results through the configured reporters |
+| `npm run allure:generate` | Generate the Allure HTML report |
+| `npm run allure:open` | Open the generated Allure report |
+| `npm run allure:serve` | Generate and serve the Allure report |
+| `npm run test:report` | Open the Playwright HTML report |
+
+> **Important:** Ensure `allure-playwright` is configured in `playwright.config.ts` before running tests. The Allure results directory must contain test execution data before generating the report.
 
 ## 🧩 Key Features
 
@@ -179,7 +268,8 @@ The report helps you review test outcomes, failures, and debugging details. Scre
 - **Environment-Based Configuration:** Keeps application settings and test credentials configurable.
 - **API Test Selection:** Supports running subsets of tests using Playwright tags.
 - **Request Interception:** Includes scenarios for continuing, fulfilling, and aborting requests.
-- **HTML Reporting:** Generates a report for reviewing test execution results.
+- **Allure Reporting:** Generates detailed Allure reports for test execution analysis.
+- **Playwright HTML Reporting:** Provides a separate built-in HTML report.
 - **Failure Debugging:** Configures retries, screenshots, and tracing to assist with investigating test failures.
 
 ## 🏗️ Design Approach
@@ -208,7 +298,7 @@ This project demonstrates practical experience with:
 - TypeScript-based test development
 - Page Object Model architecture
 - Environment variable management
-- Test execution and reporting
+- Test execution and reporting using Allure and Playwright
 - API request interception concepts
 - Automated testing workflow configuration
 
