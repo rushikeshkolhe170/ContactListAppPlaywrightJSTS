@@ -116,8 +116,8 @@ export class ContactListPage
         await this.addressOne.fill(addressOne);
         await this.addressTwo.fill(addressTwo);
         await this.city.fill(city);
-        await this.stateOrProvince1.fill(stateOrProvince);
-        await this.postalCode.fill(zipOrPostalCode);
+        await this.stateOrProvince.fill(stateOrProvince);
+        await this.zipOrPostalCode.fill(zipOrPostalCode);
         await this.country.fill(country);
         await this.submitBtn.click();
         await this.contactList.waitFor({state: 'visible'});
@@ -236,6 +236,47 @@ export class ContactListPage
         await this.cancelBtn.click();
     }
 
+    async editContactFormValidations(firstName : string, lastName : string, invalidDOB : string, invalidPhone : string, invalidEmail : string)
+    {
+        await this.editContact.click();
+        await expect(this.firstName1).not.toHaveValue('');
+        await this.firstName1.fill('');
+        await this.lastName1.fill('');
+        await this.dob.fill('');
+        await this.email.fill('');
+        await this.phone.fill('');
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Validation failed: lastName: Path `lastName` is required., firstName: Path `firstName` is required.')
+        await this.firstName1.fill(firstName);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Validation failed: lastName: Path `lastName` is required.')
+        await this.firstName1.clear();
+        await this.lastName1.fill(lastName);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Validation failed: firstName: Path `firstName` is required.')
+        await this.lastName1.clear();
+        await this.firstName1.fill(firstName);
+        await this.lastName1.fill(lastName);
+        await this.dob.fill(invalidDOB);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Validation failed: birthdate: Birthdate is invalid')
+        await this.dob.clear();
+        await this.phone.fill(invalidPhone);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Validation failed: phone: Phone number is invalid')
+        await this.phone.clear();
+        await this.email.fill(invalidEmail);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Validation failed: email: Email is invalid')
+        await this.email.clear();
+        await this.dob.fill(invalidDOB);
+        await this.phone.fill(invalidPhone);
+        await this.email.fill(invalidEmail);
+        await this.submitBtn.click();
+        await this.errorMsgCheck('Validation failed: phone: Phone number is invalid, email: Email is invalid, birthdate: Birthdate is invalid')
+        await this.cancelBtn.click();
+    }
+
     async deleteContact(firstName : string, lastName : string, email : string)
     {
         try
@@ -249,7 +290,6 @@ export class ContactListPage
         await this.clickOnParticularContact(firstName, lastName, email);
         await this.firstName1.waitFor({state : 'visible'});
         this.page.on('dialog', async dialog => {
-            console.log(dialog.message());
             await dialog.accept();
         })
         await this.deleteBtn.click();
@@ -273,9 +313,22 @@ export class ContactListPage
         await expect(this.errorMsg).toHaveText(text);
     }
 
-    async captureScreenshot(imageName : string)
+    async captureFooterImageScreenshot()
     {
-        await this.footerImg.screenshot({ path : imageName + '.png' });
+        await this.footerImg.screenshot();
+    }
+
+    async clickOnFirstRecord()
+    {
+        try
+        {
+            await this.contactList.waitFor({state : 'visible', timeout : 10000});
+        } catch
+        {
+            console.log('Table does not exist because there is no data');
+            return;
+        }
+        await this.tablesRows.nth(1).click();
     }
 
     async clickOnParticularContact(firstName : string, lastName : string, email : string)
@@ -288,20 +341,15 @@ export class ContactListPage
             console.log('Table does not exist because there is no data');
             return;
         }
-        //await this.firstName1.waitFor({state : 'visible'});
         let userFound : boolean = false;
         const fullName : string = firstName + ' ' + lastName;
         const userNames : Locator = this.tablesRows.locator('td:nth-child(2)');
-        console.log(await userNames.count());
         const userEmails : Locator = this.tablesRows.locator('td:nth-child(4)');
         const emailCount : number = await userEmails.count();
-        console.log(emailCount);
         for(let i = 0; i < emailCount; i++)
         {
             const email1 = (await userEmails.nth(i).textContent())?.trim();
-            console.log(email1);
             const user1 = (await userNames.nth(i).textContent())?.trim();
-            console.log(user1);
             if(email1 === email && user1 === fullName)
             {
                 userFound = true;
